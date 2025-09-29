@@ -46,10 +46,9 @@ try:
         st.subheader('株価チャート')
         fig_price = go.Figure()
         fig_price.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='ローソク足'))
-        long_period_threshold = ('3mo', '6mo', '1y', '2y', '5y', '10y')
-        if period in long_period_threshold:
-            fig_price.add_trace(go.Scatter(x=df.index, y=df['EMA20'], name='EMA 20', line=dict(color='orange')))
-            fig_price.add_trace(go.Scatter(x=df.index, y=df['EMA50'], name='EMA 50', line=dict(color='purple')))
+
+        fig_price.add_trace(go.Scatter(x=df.index, y=df['EMA20'], name='EMA 20', line=dict(color='orange')))
+        fig_price.add_trace(go.Scatter(x=df.index, y=df['EMA50'], name='EMA 50', line=dict(color='purple')))
         fig_price.update_layout(xaxis_rangeslider_visible=False, yaxis_title='株価 (USD)', margin=dict(l=0, r=0, t=40, b=0))
         st.plotly_chart(fig_price, use_container_width=True)
 
