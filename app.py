@@ -38,6 +38,7 @@ try:
     # df_extended['SMA20'] = df_extended['Close'].rolling(window=20).mean()
     # df_extended['SMA50'] = df_extended['Close'].rolling(window=50).mean()
     df_extended['RSI'] = ta.rsi(df_extended['Close'], length=14)
+    df_extended.ta.macd(close='Close', fast=12, slow=26, signal=9, append=True)
 
     view_start_date_aware = pd.to_datetime(view_start_date).tz_localize('America/New_York')
     df = df_extended[df_extended.index >= view_start_date_aware]
@@ -84,6 +85,31 @@ try:
         st.write("#### RSI")
         df['RSI'] = ta.rsi(df['Close'], length=14)
         st.line_chart(df['RSI'])
+
+        st.header("MACD")
+        fig_macd = go.Figure()
+        fig_macd.add_trace(go.Bar(
+            x=df.index,
+            y=df['MACD_12_26_9'],
+            name='ヒストグラム')
+        )
+        fig_macd.add_trace(go.Scatter(
+            x=df.index,
+            y=df['MACD_12_26_9'],
+            mode='lines',
+            line=dict(color='blue', width=1),
+            name='MACD'
+        ))
+        fig_macd.add_trace(go.Scatter(x=df.index, y=df['MACDs_12_26_9'], line=dict(color='orange', width=1), name='シグナル'))
+        st.plotly_chart(fig_macd, use_container_width=True)
+
+        with st.expander('MACDの見方📕'):
+            st.write("""
+                **MACD (マックディー)** は、トレンドの方向性と勢いを測る指標です。
+                - **ゴールデンクロス**: MACDライン（青）がシグナルライン（オレンジ）を下から上に抜けたら、**買い**のサインとされます。📈
+                - **デッドクロス**: MACDßラインがシグナルラインを上から下に抜けたら、**売り**のサインとされます。📉
+                - **ヒストグラム**: 2本の線の乖離を示し、0ラインの上にあれば上昇トレンド、下にあれば下降トレンドの勢いを示します。
+            """)
 
         st.write("#### 株価チャート（出来高）")
         st.bar_chart(df['Volume'])
